@@ -2,6 +2,8 @@ package pkgJava;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
 import java.security.Permission;
 
 public class InnerClassDemo {
@@ -14,9 +16,18 @@ public class InnerClassDemo {
 			int num = Integer.parseInt(br.readLine().trim());
 			Object o;// Must be used to hold the reference of the instance of the class Solution.Inner.Private
 			
-			o = new Inner();
-			Class[] c = o.getClass().getDeclaredClasses();// .toClass(new Inner.Private());
-			o = c[0].newInstance();
+			Inner inner = new Inner();
+			
+			Constructor<?> ctor = Inner.Private.class.getDeclaredConstructor(Inner.class);
+			ctor.setAccessible(true);
+
+			o = ctor.newInstance(inner);
+			
+			Method m = Inner.Private.class.getDeclaredMethods()[0];
+			m.setAccessible(true);
+			
+			System.out.println(num + " is "+ m.invoke(o, num));
+			
 			System.out.println("An instance of class: " + o.getClass().getCanonicalName() + " has been created");
 			
 		}//end of try
